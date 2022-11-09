@@ -139,6 +139,9 @@ public class ZLPhotoPreviewSheet: UIView {
     @objc public var selectImageRequestErrorBlock: (([PHAsset], [Int]) -> Void)?
     
     @objc public var cancelBlock: (() -> Void)?
+
+    ///  是否自动关闭控制器
+    @objc public var isAutoCloseController: Bool = true
     
     deinit {
         zl_debugPrint("ZLPhotoPreviewSheet deinit")
@@ -413,6 +416,10 @@ public class ZLPhotoPreviewSheet: UIView {
             sender?.tabBarController?.tabBar.isHidden = temp
         }
     }
+
+    public func dismiss(animated: Bool = true, completion: (() -> Void)? = nil) {
+        self.sender?.presentedViewController?.dismiss(animated: animated, completion: completion)
+    }
     
     private func showNoAuthorityAlert() {
         let action = ZLCustomAlertAction(title: localLanguageTextValue(.ok), style: .default) { _ in
@@ -589,20 +596,22 @@ public class ZLPhotoPreviewSheet: UIView {
                     self?.selectImageRequestErrorBlock?(errorAssets, errorIndexs)
                 }
             }
-            
-            if let vc = viewController {
-                self?.isHidden = true
-                self?.animate = false
-                vc.dismiss(animated: true) {
-                    call()
-                    self?.hide()
+            if self?.isAutoCloseController ?? false {
+                if let vc = viewController {
+                    self?.isHidden = true
+                    self?.animate = false
+                    vc.dismiss(animated: true) {
+                        call()
+                        self?.hide()
+                    }
+                } else {
+                    self?.hide(completion: {
+                        call()
+                    })
                 }
             } else {
-                self?.hide(completion: {
-                    call()
-                })
+                call()
             }
-            
             self?.arrSelectedModels.removeAll()
             self?.arrDataSources.removeAll()
         }
