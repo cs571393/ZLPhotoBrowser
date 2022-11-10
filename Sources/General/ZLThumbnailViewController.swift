@@ -206,7 +206,7 @@ class ZLThumbnailViewController: UIViewController {
         cleanTimer()
     }
     
-    public init(albumList: ZLAlbumListModel) {
+    init(albumList: ZLAlbumListModel) {
         self.albumList = albumList
         super.init(nibName: nil, bundle: nil)
     }
