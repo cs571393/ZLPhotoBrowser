@@ -828,8 +828,13 @@ class ZLThumbnailViewController: UIViewController {
         
         var canSelect = true
         // If mixed selection is not allowed, and the newModel type is video, it will not be selected.
-        if !config.allowMixSelect, newModel.type == .video {
+        if !config.allowMixSelect, newModel.type == .video && ZLPhotoConfiguration.default().maxSelectCount != 1 {
             canSelect = false
+        }
+        if newModel.type == .video && ZLPhotoConfiguration.default().maxSelectCount == 1 {
+            nav?.arrSelectedModels.first?.isSelected = false
+            nav?.arrSelectedModels.removeAll()
+            collectionView.reloadData()
         }
         if canSelect, canAddModel(newModel, currentSelectCount: nav?.arrSelectedModels.count ?? 0, sender: self, showAlert: false) {
             if !shouldDirectEdit(newModel) {
