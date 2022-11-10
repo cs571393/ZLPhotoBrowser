@@ -193,11 +193,11 @@ class ZLThumbnailViewController: UIViewController {
         PHPhotoLibrary.authorizationStatus(for: .readWrite) == .limited && ZLPhotoConfiguration.default().showAddPhotoButton && albumList.isCameraRoll
     }
     
-    public override var prefersStatusBarHidden: Bool {
+    override var prefersStatusBarHidden: Bool {
         return false
     }
     
-    public override var preferredStatusBarStyle: UIStatusBarStyle {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
         return ZLPhotoUIConfiguration.default().statusBarStyle
     }
     
@@ -216,7 +216,7 @@ class ZLThumbnailViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         setupUI()
@@ -235,20 +235,20 @@ class ZLThumbnailViewController: UIViewController {
         }
     }
     
-    public override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
         collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
         resetBottomToolBtnStatus()
     }
     
-    public override func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         isLayoutOK = true
         isPreviewPush = false
     }
     
-    public override func viewDidLayoutSubviews() {
+    override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
         let navViewNormalH: CGFloat = 44
@@ -930,7 +930,7 @@ class ZLThumbnailViewController: UIViewController {
 
 extension ZLThumbnailViewController: UIGestureRecognizerDelegate {
     
-    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         let config = ZLPhotoConfiguration.default()
         if (config.maxSelectCount == 1 && !config.showSelectBtnWhenSingleSelect) || embedAlbumListView?.isHidden == false {
             return false
@@ -944,15 +944,15 @@ extension ZLThumbnailViewController: UIGestureRecognizerDelegate {
 
 extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return ZLLayout.thumbCollectionViewItemSpacing
     }
     
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return ZLLayout.thumbCollectionViewLineSpacing
     }
     
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let defaultCount = CGFloat(ZLPhotoConfiguration.default().columnCount)
         var columnCount: CGFloat = deviceIsiPad() ? (defaultCount + 2) : defaultCount
         if UIApplication.shared.statusBarOrientation.isLandscape {
@@ -963,11 +963,11 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
         return CGSize(width: singleW, height: singleW)
     }
     
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return arrDataSources.count + offset
     }
     
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let config = ZLPhotoConfiguration.default()
         if showCameraCell, (config.sortAscending && indexPath.row == arrDataSources.count) || (!config.sortAscending && indexPath.row == 0) {
             // camera cell
@@ -1039,7 +1039,7 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
         return cell
     }
     
-    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let c = cell as? ZLThumbnailPhotoCell else {
             return
         }
@@ -1051,7 +1051,7 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
         setCellMaskView(c, isSelected: model.isSelected, model: model)
     }
     
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let c = collectionView.cellForItem(at: indexPath)
         if c is ZLCameraCell {
             showCamera()
@@ -1219,7 +1219,7 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
 
 extension ZLThumbnailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         picker.dismiss(animated: true) {
             let image = info[.originalImage] as? UIImage
             let url = info[.mediaURL] as? URL
@@ -1231,7 +1231,7 @@ extension ZLThumbnailViewController: UIImagePickerControllerDelegate, UINavigati
 
 extension ZLThumbnailViewController: PHPhotoLibraryChangeObserver {
     
-    public func photoLibraryDidChange(_ changeInstance: PHChange) {
+    func photoLibraryDidChange(_ changeInstance: PHChange) {
         guard let changes = changeInstance.changeDetails(for: albumList.result) else {
             return
         }
