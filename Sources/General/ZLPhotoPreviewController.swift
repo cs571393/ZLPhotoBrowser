@@ -606,6 +606,7 @@ class ZLPhotoPreviewController: UIViewController {
             if !nav.arrSelectedModels.isEmpty {
                 callBackBeforeDone()
             }
+            nav.arrSelectedModels.removeAll()
         } else {
             callBackBeforeDone()
         }
