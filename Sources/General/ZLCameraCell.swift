@@ -43,6 +43,16 @@ class ZLCameraCell: UICollectionViewCell {
     private var photoOutput: AVCapturePhotoOutput?
     
     private var previewLayer: AVCaptureVideoPreviewLayer?
+
+    lazy var coverView: UIView = {
+        let view = UIView()
+        view.isUserInteractionEnabled = false
+        view.isHidden = true
+        view.backgroundColor = UIColor(white: 1, alpha: 0.5)
+        return view
+    }()
+
+    var enableSelect: Bool = true
     
     deinit {
         session?.stopRunning()
@@ -67,6 +77,7 @@ class ZLCameraCell: UICollectionViewCell {
         imageView.center = CGPoint(x: bounds.midX, y: bounds.midY)
         
         previewLayer?.frame = contentView.layer.bounds
+        coverView.frame = contentView.frame
     }
     
     private func setupUI() {
@@ -74,6 +85,7 @@ class ZLCameraCell: UICollectionViewCell {
         layer.cornerRadius = ZLPhotoConfiguration.default().cellCornerRadio
         
         contentView.addSubview(imageView)
+        contentView.addSubview(coverView)
         backgroundColor = .zl.cameraCellBgColor
     }
     

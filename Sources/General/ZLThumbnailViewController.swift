@@ -831,11 +831,6 @@ class ZLThumbnailViewController: UIViewController {
         if !config.allowMixSelect, newModel.type == .video && ZLPhotoConfiguration.default().maxSelectCount != 1 {
             canSelect = false
         }
-        if newModel.type == .video && ZLPhotoConfiguration.default().maxSelectCount == 1 {
-            nav?.arrSelectedModels.first?.isSelected = false
-            nav?.arrSelectedModels.removeAll()
-            collectionView.reloadData()
-        }
         if canSelect, canAddModel(newModel, currentSelectCount: nav?.arrSelectedModels.count ?? 0, sender: self, showAlert: false) {
             if !shouldDirectEdit(newModel) {
                 newModel.isSelected = true
@@ -982,7 +977,7 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
             if config.showCaptureImageOnTakePhotoBtn {
                 cell.startCapture()
             }
-            
+            self.setCellMaskView(cameraCell: cell)
             return cell
         }
         
@@ -1057,8 +1052,13 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let config = ZLPhotoConfiguration.default()
         let c = collectionView.cellForItem(at: indexPath)
-        if c is ZLCameraCell {
+        if let cell = c as? ZLCameraCell {
+            // 不允许选择，且上面有蒙层时，不准点击
+            if !cell.enableSelect, config.showInvalidMask {
+                return
+            }
             showCamera()
             return
         }
@@ -1072,8 +1072,6 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
         guard let cell = c as? ZLThumbnailPhotoCell else {
             return
         }
-        
-        let config = ZLPhotoConfiguration.default()
         
         if !config.allowPreviewPhotos {
             cell.btnSelectClick()
@@ -1148,6 +1146,10 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
         let visibleIndexPaths = collectionView.indexPathsForVisibleItems
         
         visibleIndexPaths.forEach { indexPath in
+            if let cell = self.collectionView.cellForItem(at: indexPath) as? ZLCameraCell {
+                self.setCellMaskView(cameraCell: cell)
+                return
+            }
             guard let cell = self.collectionView.cellForItem(at: indexPath) as? ZLThumbnailPhotoCell else {
                 return
             }
@@ -1219,7 +1221,35 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
             }
         }
     }
-    
+
+    private func setCellMaskView(cameraCell: ZLCameraCell) {
+        cameraCell.coverView.isHidden = true
+        cameraCell.enableSelect = true
+        cameraCell.coverView.backgroundColor = .zl.invalidMaskColor
+        let arrSel = (navigationController as? ZLImageNavController)?.arrSelectedModels ?? []
+        let model = arrSel.last
+        let config = ZLPhotoConfiguration.default()
+
+        let selCount = arrSel.count
+        if selCount < config.maxSelectCount {
+            if config.allowMixSelect {
+                let videoCount = arrSel.filter { $0.type == .video }.count
+                if videoCount >= config.maxVideoSelectCount, model?.type == .video {
+                    cameraCell.coverView.isHidden = !config.showInvalidMask
+                    cameraCell.enableSelect = false
+                } else if (config.maxSelectCount - selCount) <= (config.minVideoSelectCount - videoCount), model?.type != .video {
+                    cameraCell.coverView.isHidden = !config.showInvalidMask
+                    cameraCell.enableSelect = false
+                }
+            } else if selCount > 0 {
+                cameraCell.coverView.isHidden = (!config.showInvalidMask || model?.type != .video)
+                cameraCell.enableSelect = model?.type != .video
+            }
+        } else if selCount >= config.maxSelectCount {
+            cameraCell.coverView.isHidden = !config.showInvalidMask
+            cameraCell.enableSelect = false
+        }
+    }
 }
 
 extension ZLThumbnailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
