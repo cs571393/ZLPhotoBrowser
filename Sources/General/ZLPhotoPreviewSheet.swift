@@ -28,6 +28,8 @@ import UIKit
 import Photos
 
 public class ZLPhotoPreviewSheet: UIView {
+
+    public typealias CustomCameraBlock = (UIImage?, URL?)-> Void
     
     private enum Layout {
         static let colH: CGFloat = 155
@@ -139,6 +141,8 @@ public class ZLPhotoPreviewSheet: UIView {
     @objc public var selectImageRequestErrorBlock: (([PHAsset], [Int]) -> Void)?
     
     @objc public var cancelBlock: (() -> Void)?
+    /// 选择自定义相机回调
+    @objc public var selectCustomCameraBlock: ((ZLPhotoPreviewSheet.CustomCameraBlock?) -> Void)?
 
     ///  是否自动关闭控制器
     @objc public var isAutoCloseController: Bool = true
@@ -664,10 +668,12 @@ public class ZLPhotoPreviewSheet: UIView {
             let nav: ZLImageNavController
             if ZLPhotoUIConfiguration.default().style == .embedAlbumList {
                 let tvc = ZLThumbnailViewController(albumList: cameraRoll)
+                tvc.selectCustomCameraBlock = self.selectCustomCameraBlock
                 nav = self.getImageNav(rootViewController: tvc)
             } else {
                 nav = self.getImageNav(rootViewController: ZLAlbumListController())
                 let tvc = ZLThumbnailViewController(albumList: cameraRoll)
+                tvc.selectCustomCameraBlock = self.selectCustomCameraBlock
                 nav.pushViewController(tvc, animated: true)
             }
             if deviceIsiPad() {

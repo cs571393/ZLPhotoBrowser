@@ -133,6 +133,8 @@ class ZLThumbnailViewController: UIViewController {
     private var autoScrollTimer: CADisplayLink?
     
     private var lastPanUpdateTime = CACurrentMediaTime()
+    /// 选择自定义相机回调
+    @objc public var selectCustomCameraBlock: ((ZLPhotoPreviewSheet.CustomCameraBlock?) -> Void)?
     
     private let showLimitAuthTipsView: Bool = {
         if #available(iOS 14.0, *), PHPhotoLibrary.authorizationStatus(for: .readWrite) == .limited, ZLPhotoConfiguration.default().showEnterSettingTips {
@@ -751,11 +753,14 @@ class ZLThumbnailViewController: UIViewController {
     private func showCamera() {
         let config = ZLPhotoConfiguration.default()
         if config.useCustomCamera {
-            let camera = ZLCustomCamera()
-            camera.takeDoneBlock = { [weak self] image, videoUrl in
+            self.selectCustomCameraBlock?({ [weak self] image, videoUrl in
                 self?.save(image: image, videoUrl: videoUrl)
-            }
-            showDetailViewController(camera, sender: nil)
+            })
+//            let camera = ZLCustomCamera()
+//            camera.takeDoneBlock = { [weak self] image, videoUrl in
+//                self?.save(image: image, videoUrl: videoUrl)
+//            }
+//            showDetailViewController(camera, sender: nil)
         } else {
             if !UIImagePickerController.isSourceTypeAvailable(.camera) {
                 showAlertView(localLanguageTextValue(.cameraUnavailable), self)
@@ -782,7 +787,7 @@ class ZLThumbnailViewController: UIViewController {
         }
     }
     
-    private func save(image: UIImage?, videoUrl: URL?) {
+    public func save(image: UIImage?, videoUrl: URL?) {
         let hud = ZLProgressHUD(style: ZLPhotoUIConfiguration.default().hudStyle)
         if let image = image {
             hud.show()
