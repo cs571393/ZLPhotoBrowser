@@ -599,6 +599,7 @@ class ZLPhotoPreviewController: UIViewController {
         
         let currentModel = arrDataSources[currentIndex]
         if autoSelectCurrentIfNotSelectAnyone {
+            let isNotSelectAnyone = nav.arrSelectedModels.isEmpty
             if nav.arrSelectedModels.isEmpty, canAddModel(currentModel, currentSelectCount: nav.arrSelectedModels.count, sender: self) {
                 nav.arrSelectedModels.append(currentModel)
             }
@@ -606,7 +607,9 @@ class ZLPhotoPreviewController: UIViewController {
             if !nav.arrSelectedModels.isEmpty {
                 callBackBeforeDone()
             }
-            nav.arrSelectedModels.removeAll()
+            if isNotSelectAnyone {
+                nav.arrSelectedModels.removeAll()
+            }
         } else {
             callBackBeforeDone()
         }
