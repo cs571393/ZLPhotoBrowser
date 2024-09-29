@@ -28,7 +28,6 @@ import UIKit
 import AVFoundation
 
 class ZLCameraCell: UICollectionViewCell {
-    
     private lazy var imageView: UIImageView = {
         let view = UIImageView(image: .zl.getImage("zl_takePhoto"))
         view.contentMode = .scaleAspectFit
@@ -54,6 +53,12 @@ class ZLCameraCell: UICollectionViewCell {
 
     var enableSelect: Bool = true
     
+    var isEnable = true {
+        didSet {
+            contentView.alpha = isEnable ? 1 : 0.3
+        }
+    }
+    
     deinit {
         session?.stopRunning()
         session = nil
@@ -73,7 +78,6 @@ class ZLCameraCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        imageView.frame = CGRect(x: 0, y: 0, width: bounds.width / 3, height: bounds.width / 3)
         imageView.center = CGPoint(x: bounds.midX, y: bounds.midY)
         
         previewLayer?.frame = contentView.layer.bounds
@@ -82,7 +86,7 @@ class ZLCameraCell: UICollectionViewCell {
     
     private func setupUI() {
         layer.masksToBounds = true
-        layer.cornerRadius = ZLPhotoConfiguration.default().cellCornerRadio
+        layer.cornerRadius = ZLPhotoUIConfiguration.default().cellCornerRadio
         
         contentView.addSubview(imageView)
         contentView.addSubview(coverView)
@@ -160,5 +164,4 @@ class ZLCameraCell: UICollectionViewCell {
             setupSession()
         }
     }
-    
 }

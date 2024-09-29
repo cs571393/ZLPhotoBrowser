@@ -109,7 +109,7 @@ class PhotoConfigureCNViewController: UIViewController {
     
     var customCameraSwitch: UISwitch!
     
-    var cameraFlashSegment: UISegmentedControl!
+    var cameraFlashSwitch: UISwitch!
     
     var customAlertSwitch: UISwitch!
     
@@ -291,7 +291,7 @@ class PhotoConfigureCNViewController: UIViewController {
             make.left.equalTo(previewCountLabel.snp.left)
         }
         
-        cellRadiusTextField = createTextField(String(format: "%.2f", config.cellCornerRadio), .decimalPad)
+        cellRadiusTextField = createTextField(String(format: "%.2f", uiConfig.cellCornerRadio), .decimalPad)
         containerView.addSubview(cellRadiusTextField)
         cellRadiusTextField.snp.makeConstraints { make in
             make.left.equalTo(cellRadiusLabel.snp.right).offset(horSpacing)
@@ -346,7 +346,7 @@ class PhotoConfigureCNViewController: UIViewController {
             make.left.equalTo(previewCountLabel.snp.left)
         }
         
-        columnCountLabel = createLabel(String(config.columnCount))
+        columnCountLabel = createLabel(String(uiConfig.columnCount))
         containerView.addSubview(columnCountLabel)
         columnCountLabel.snp.makeConstraints { make in
             make.left.equalTo(columnCountTitleLabel.snp.right).offset(10)
@@ -357,7 +357,7 @@ class PhotoConfigureCNViewController: UIViewController {
         columnStepper.minimumValue = 2
         columnStepper.maximumValue = 6
         columnStepper.stepValue = 1
-        columnStepper.value = Double(config.columnCount)
+        columnStepper.value = Double(uiConfig.columnCount)
         columnStepper.addTarget(self, action: #selector(columnStepperValueChanged), for: .valueChanged)
         containerView.addSubview(columnStepper)
         columnStepper.snp.makeConstraints { make in
@@ -375,7 +375,7 @@ class PhotoConfigureCNViewController: UIViewController {
         }
         
         sortAscendingSegment = UISegmentedControl(items: ["升序", "降序"])
-        sortAscendingSegment.selectedSegmentIndex = config.sortAscending ? 0 : 1
+        sortAscendingSegment.selectedSegmentIndex = uiConfig.sortAscending ? 0 : 1
         sortAscendingSegment.addTarget(self, action: #selector(sortAscendingChanged), for: .valueChanged)
         containerView.addSubview(sortAscendingSegment)
         sortAscendingSegment.snp.makeConstraints { make in
@@ -834,7 +834,7 @@ class PhotoConfigureCNViewController: UIViewController {
         }
         
         showCaptureInCameraCellSwitch = UISwitch()
-        showCaptureInCameraCellSwitch.isOn = config.showCaptureImageOnTakePhotoBtn
+        showCaptureInCameraCellSwitch.isOn = uiConfig.showCaptureImageOnTakePhotoBtn
         showCaptureInCameraCellSwitch.addTarget(self, action: #selector(showCaptureInCameraCellChanged), for: .valueChanged)
         containerView.addSubview(showCaptureInCameraCellSwitch)
         showCaptureInCameraCellSwitch.snp.makeConstraints { make in
@@ -868,7 +868,7 @@ class PhotoConfigureCNViewController: UIViewController {
         }
         
         showSelectMaskSwitch = UISwitch()
-        showSelectMaskSwitch.isOn = config.showSelectedMask
+        showSelectMaskSwitch.isOn = uiConfig.showSelectedMask
         showSelectMaskSwitch.addTarget(self, action: #selector(showSelectMaskChanged), for: .valueChanged)
         containerView.addSubview(showSelectMaskSwitch)
         showSelectMaskSwitch.snp.makeConstraints { make in
@@ -885,7 +885,7 @@ class PhotoConfigureCNViewController: UIViewController {
         }
         
         showSelectBorderSwitch = UISwitch()
-        showSelectBorderSwitch.isOn = config.showSelectedBorder
+        showSelectBorderSwitch.isOn = uiConfig.showSelectedBorder
         showSelectBorderSwitch.addTarget(self, action: #selector(showSelectBorderChanged), for: .valueChanged)
         containerView.addSubview(showSelectBorderSwitch)
         showSelectBorderSwitch.snp.makeConstraints { make in
@@ -902,7 +902,7 @@ class PhotoConfigureCNViewController: UIViewController {
         }
         
         showInvalidSelectMaskSwitch = UISwitch()
-        showInvalidSelectMaskSwitch.isOn = config.showInvalidMask
+        showInvalidSelectMaskSwitch.isOn = uiConfig.showInvalidMask
         showInvalidSelectMaskSwitch.addTarget(self, action: #selector(showInvalidSelectMaskChanged), for: .valueChanged)
         containerView.addSubview(showInvalidSelectMaskSwitch)
         showInvalidSelectMaskSwitch.snp.makeConstraints { make in
@@ -928,18 +928,18 @@ class PhotoConfigureCNViewController: UIViewController {
         }
         
         // 闪光灯模式
-        let cameraFlashLabel = createLabel("闪光灯模式")
+        let cameraFlashLabel = createLabel("闪光灯开关")
         containerView.addSubview(cameraFlashLabel)
         cameraFlashLabel.snp.makeConstraints { make in
             make.top.equalTo(customCameraLabel.snp.bottom).offset(velSpacing)
             make.left.equalTo(previewCountLabel.snp.left)
         }
         
-        cameraFlashSegment = UISegmentedControl(items: ["自动", "打开", "关闭"])
-        cameraFlashSegment.selectedSegmentIndex = config.cameraConfiguration.flashMode.rawValue
-        cameraFlashSegment.addTarget(self, action: #selector(cameraFlashSegmentChanged), for: .valueChanged)
-        containerView.addSubview(cameraFlashSegment)
-        cameraFlashSegment.snp.makeConstraints { make in
+        cameraFlashSwitch = UISwitch()
+        cameraFlashSwitch.isOn = config.cameraConfiguration.showFlashSwitch
+        cameraFlashSwitch.addTarget(self, action: #selector(cameraFlashChanged), for: .valueChanged)
+        containerView.addSubview(cameraFlashSwitch)
+        cameraFlashSwitch.snp.makeConstraints { make in
             make.left.equalTo(cameraFlashLabel.snp.right).offset(horSpacing)
             make.centerY.equalTo(cameraFlashLabel)
         }
@@ -994,12 +994,12 @@ class PhotoConfigureCNViewController: UIViewController {
     
     @objc func columnStepperValueChanged() {
         columnCountLabel.text = String(Int(columnStepper.value))
-        config.columnCount = Int(columnStepper.value)
+        uiConfig.columnCount = Int(columnStepper.value)
     }
     
     @objc func sortAscendingChanged() {
         let index = sortAscendingSegment.selectedSegmentIndex
-        config.sortAscending = index == 0
+        uiConfig.sortAscending = index == 0
     }
     
     @objc func allowSelectImageChanged() {
@@ -1178,7 +1178,7 @@ class PhotoConfigureCNViewController: UIViewController {
     }
     
     @objc func showCaptureInCameraCellChanged() {
-        config.showCaptureImageOnTakePhotoBtn = showCaptureInCameraCellSwitch.isOn
+        uiConfig.showCaptureImageOnTakePhotoBtn = showCaptureInCameraCellSwitch.isOn
     }
     
     @objc func showSelectIndexChanged() {
@@ -1186,23 +1186,23 @@ class PhotoConfigureCNViewController: UIViewController {
     }
     
     @objc func showSelectMaskChanged() {
-        config.showSelectedMask = showSelectMaskSwitch.isOn
+        uiConfig.showSelectedMask = showSelectMaskSwitch.isOn
     }
     
     @objc func showSelectBorderChanged() {
-        config.showSelectedBorder = showSelectBorderSwitch.isOn
+        uiConfig.showSelectedBorder = showSelectBorderSwitch.isOn
     }
     
     @objc func showInvalidSelectMaskChanged() {
-        config.showInvalidMask = showInvalidSelectMaskSwitch.isOn
+        uiConfig.showInvalidMask = showInvalidSelectMaskSwitch.isOn
     }
     
     @objc func customCameraChanged() {
         config.useCustomCamera = customCameraSwitch.isOn
     }
     
-    @objc func cameraFlashSegmentChanged() {
-        config.cameraConfiguration.flashMode = ZLCameraConfiguration.FlashMode(rawValue: cameraFlashSegment.selectedSegmentIndex)!
+    @objc func cameraFlashChanged() {
+        config.cameraConfiguration.showFlashSwitch = cameraFlashSwitch.isOn
     }
     
     @objc func customAlertChanged() {
@@ -1234,7 +1234,7 @@ extension PhotoConfigureCNViewController: UITextFieldDelegate {
         } else if textField == maxVideoDurationTextField {
             config.maxSelectVideoDuration = Int(textField.text ?? "") ?? 120
         } else if textField == cellRadiusTextField {
-            config.cellCornerRadio = CGFloat(Double(textField.text ?? "") ?? 0)
+            uiConfig.cellCornerRadio = CGFloat(Double(textField.text ?? "") ?? 0)
         } else if textField == autoScrollMaxSpeedTextField {
             config.autoScrollMaxSpeed = CGFloat(Double(textField.text ?? "") ?? 0)
         }
