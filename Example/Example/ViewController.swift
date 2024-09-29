@@ -27,6 +27,10 @@ class ViewController: UIViewController {
         
         setupUI()
         
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//            FLEXManager.shared.showExplorer()
+//        }
+        
         ZLPhotoUIConfiguration.default()
             .customAlertClass(CustomAlertController.self)
     }
@@ -151,32 +155,49 @@ class ViewController: UIViewController {
     }
     
     func showImagePicker(_ preview: Bool) {
-        /**
-          // Custom UI
-         ZLPhotoUIConfiguration.default()
-             .navBarColor(.white)
-             .navViewBlurEffectOfAlbumList(nil)
-             .indexLabelBgColor(.black)
-             .indexLabelTextColor(.white)
-         */
+        let minItemSpacing: CGFloat = 2
+        let minLineSpacing: CGFloat = 2
+        
+        // Custom UI
+        ZLPhotoUIConfiguration.default()
+//            .navBarColor(.white)
+//            .navViewBlurEffectOfAlbumList(nil)
+//            .indexLabelBgColor(.black)
+//            .indexLabelTextColor(.white)
+            .minimumInteritemSpacing(minItemSpacing)
+            .minimumLineSpacing(minLineSpacing)
+            .columnCountBlock { Int(ceil($0 / (428.0 / 4))) }
+            .showScrollToBottomBtn(true)
+            
+        if ZLPhotoUIConfiguration.default().languageType == .arabic {
+            UIView.appearance().semanticContentAttribute = .forceRightToLeft
+        } else {
+            UIView.appearance().semanticContentAttribute = .unspecified
+        }
         
         // Custom image editor
-        let editImageConfiguration = ZLPhotoConfiguration.default().editImageConfiguration
-        editImageConfiguration
+        ZLPhotoConfiguration.default()
+            .editImageConfiguration
             .imageStickerContainerView(ImageStickerContainerView())
-            .canRedo(true)
 //            .tools([.draw, .clip, .mosaic, .filter])
 //            .adjustTools([.brightness, .contrast, .saturation])
-//            .clipRatios([.custom, .circle, .wh1x1, .wh3x4, .wh16x9, ZLImageClipRatio(title: "2 : 1", whRatio: 2 / 1)])
+            .clipRatios(ZLImageClipRatio.all)
 //            .imageStickerContainerView(ImageStickerContainerView())
 //            .filters([.normal, .process, ZLFilter(name: "custom", applier: ZLCustomFilter.hazeRemovalFilter)])
         
+        /*
+         ZLPhotoConfiguration.default()
+             .cameraConfiguration
+             .devicePosition(.front)
+             .allowRecordVideo(false)
+             .allowSwitchCamera(false)
+             .showFlashSwitch(true)
+          */
         ZLPhotoConfiguration.default()
-            .editImageConfiguration(editImageConfiguration)
             // You can first determine whether the asset is allowed to be selected.
-            .canSelectAsset { _ in
-                true
-            }
+            .canSelectAsset { _ in true }
+            .didSelectAsset { _ in }
+            .didDeselectAsset { _ in }
             .noAuthorityCallback { type in
                 switch type {
                 case .library:
@@ -187,6 +208,28 @@ class ViewController: UIViewController {
                     debugPrint("No microphone authority")
                 }
             }
+            .gifPlayBlock { imageView, data, _ in
+                let animatedImage = FLAnimatedImage(gifData: data)
+                
+                var animatedImageView: FLAnimatedImageView?
+                for subView in imageView.subviews {
+                    if let subView = subView as? FLAnimatedImageView {
+                        animatedImageView = subView
+                        break
+                    }
+                }
+                
+                if animatedImageView == nil {
+                    animatedImageView = FLAnimatedImageView()
+                    imageView.addSubview(animatedImageView!)
+                }
+                
+                animatedImageView?.frame = imageView.bounds
+                animatedImageView?.animatedImage = animatedImage
+                animatedImageView?.runLoopMode = .default
+            }
+            .pauseGIFBlock { $0.subviews.forEach { ($0 as? FLAnimatedImageView)?.stopAnimating() } }
+            .resumeGIFBlock { $0.subviews.forEach { ($0 as? FLAnimatedImageView)?.startAnimating() } }
 //            .operateBeforeDoneAction { currVC, block in
 //                // Do something before select photo result callback, and then call block to continue done action.
 //                block()
@@ -210,7 +253,7 @@ class ViewController: UIViewController {
             debugPrint("isOriginal: \(isOriginal)")
             
 //            guard !self.selectedAssets.isEmpty else { return }
-//            self?.saveAsset(self.selectedAssets[0])
+//            self.saveAsset(self.selectedAssets[0])
         }
         ac.cancelBlock = {
             debugPrint("cancel select")
@@ -234,10 +277,16 @@ class ViewController: UIViewController {
             filePath = NSTemporaryDirectory().appendingFormat("%@.%@", UUID().uuidString, "jpg")
         }
         
-        debugPrint("---- \(filePath)")
+        debugPrint("---- start saving \(filePath)")
         let url = URL(fileURLWithPath: filePath)
-        ZLPhotoManager.saveAsset(asset, toFile: url) { _ in
+        ZLPhotoManager.saveAsset(asset, toFile: url) { error in
             do {
+                if let error = error {
+                     debugPrint("save error: \(error)")
+                    return
+                }
+                
+                debugPrint("save suc: \(url)")
                 if asset.mediaType == .video {
                     _ = AVURLAsset(url: url)
                 } else {
@@ -312,9 +361,8 @@ class ViewController: UIViewController {
     }
     
     func save(image: UIImage?, videoUrl: URL?) {
-        let hud = ZLProgressHUD(style: ZLPhotoUIConfiguration.default().hudStyle)
         if let image = image {
-            hud.show()
+            let hud = ZLProgressHUD.show(toast: .processing)
             ZLPhotoManager.saveImageToAlbum(image: image) { [weak self] suc, asset in
                 if suc, let asset = asset {
                     let resultModel = ZLResultModel(asset: asset, image: image, isEdited: false, index: 0)
@@ -328,7 +376,7 @@ class ViewController: UIViewController {
                 hud.hide()
             }
         } else if let videoUrl = videoUrl {
-            hud.show()
+            let hud = ZLProgressHUD.show(toast: .processing)
             ZLPhotoManager.saveVideoToAlbum(url: videoUrl) { [weak self] suc, asset in
                 if suc, let asset = asset {
                     self?.fetchImage(for: asset)
@@ -403,6 +451,7 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegateFl
         
         ac.selectImageBlock = { [weak self] results, isOriginal in
             guard let `self` = self else { return }
+            self.selectedResults = results
             self.selectedImages = results.map { $0.image }
             self.selectedAssets = results.map { $0.asset }
             self.isOriginal = isOriginal

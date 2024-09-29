@@ -1,9 +1,10 @@
-[![Version](https://img.shields.io/cocoapods/v/ZLPhotoBrowser.svg?style=flat)](https://cocoapods.org/pods/ZLPhotoBrowser)
+[![Version](https://img.shields.io/github/v/tag/longitachi/ZLPhotoBrowser.svg?color=blue&include_prereleases=&sort=semver)](https://cocoapods.org/pods/ZLPhotoBrowser)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-brightgreen.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![SPM supported](https://img.shields.io/badge/SwiftPM-supported-E57141.svg)](https://swift.org/package-manager/)
-[![License](https://img.shields.io/cocoapods/l/ZLPhotoBrowser.svg?style=flat)](https://raw.githubusercontent.com/longitachi/ZLPhotoBrowser/master/LICENSE)
-[![Platform](https://img.shields.io/cocoapods/p/ZLPhotoBrowser.svg?style=flat)](https://github.com/longitachi/ZLPhotoBrowser/wiki)
+[![License](https://img.shields.io/badge/license-MIT-black)](https://raw.githubusercontent.com/longitachi/ZLPhotoBrowser/master/LICENSE)
+[![Platform](https://img.shields.io/badge/Platforms-iOS-blue?style=flat)](https://img.shields.io/badge/Platforms-iOS-blue?style=flat)
 ![Language](https://img.shields.io/badge/Language-%20Swift%20-E57141.svg)
+[![Usage](https://img.shields.io/badge/Usage-Doc-yarn?style=flat)](https://github.com/longitachi/ZLPhotoBrowser/wiki/How-to-use-(Swift))
 
 ![image](https://github.com/longitachi/ImageFolder/blob/master/ZLPhotoBrowser/preview_with_title.png)
 
@@ -34,9 +35,8 @@ ZLPhotoBrowser是一款微信样式的图片选择器，支持预览/相册内�
 
 如果你仅想使用图片编辑功能，请移步[ZLImageEditor](https://github.com/longitachi/ZLImageEditor)
 
-### <a id="功能介绍"></a>功能介绍
+### 功能介绍
 你想要的应有尽有，部分功能如下，更多功能请查看 `ZLPhotoConfiguration` 中的参数定义（没有的话欢迎提 issue ，功能建议好的话会采纳并着手开发）
-- [x] 适配 iOS14
 - [x] 支持横竖屏
 - [x] 自选框架样式
 - [x] 预览快速选择（支持拖拽选择，效果参照QQ）
@@ -59,12 +59,12 @@ ZLPhotoBrowser是一款微信样式的图片选择器，支持预览/相册内�
 
 > 如果你在使用中有好的需求及建议，或者遇到什么bug，欢迎随时issue，我会及时的回复
  
-### <a id="框架支持"></a>框架支持
+### 框架支持
  * iOS 10.0
  * Swift 5.x
  * Xcode 12.x
  
-### <a id="使用示例"></a>使用示例
+### 使用示例
  - 快速选择
  ```
  let ps = ZLPhotoPreviewSheet()
@@ -99,35 +99,36 @@ ZLPhotoBrowser是一款微信样式的图片选择器，支持预览/相册内�
  ```
  
  
-### <a id="更新日志"></a>更新日志
+### 更新日志
 > [更多更新日志](https://github.com/longitachi/ZLPhotoBrowser/blob/master/CHANGELOG.md)
 ```
-● 4.3.7
+● 4.5.5
   Add:
-    修改selectImageBlock回调参数为ZLResultModel, 删除shouldAnialysisAsset参数;
-    图片编辑器界面适配iPad;
-    支持阿拉伯语;
-    涂鸦和马赛克支持反撤销;
-    支持修改图片编辑器中icon的tint color;
+    ZLImagePreviewController界面支持下拉返回手势。
+    更新获取相册权限的API。
   Fix:
-    修复编辑视频时获取视频版本错误的bug.
-● 4.3.6
+    修复马赛克在涂抹过程中不显示的bug。
+● 4.5.4
   Add:
-    提供一个保存PHAsset到本地的方法;
-    更新解析GIF的方法;
+    支持iOS18。
+    提升图片编辑的使用体验，优化动画效果。
+    自定义相机支持设置`VideoMirrored`。
   Fix:
-    修复下拉返回手势动画中的一个crash;
-● 4.3.5
+    修复在非刘海屏的手机上，部分界面UI展示异常的问题。
+● 4.5.3
   Add:
-    支持自定义Alert样式;
-    优化图片编辑体验;
+    支持自定义无权限弹窗。
+    支持图片编辑工具在较少时居中排列。
+  Fix:
+    修复图片裁剪比例仅有一个时初次不显示的bug.
+    修复保存iCloud的资源时，可能报错的bug.
 ...
 ```
 
-### <a id="国际化语言"></a>国际化语言
+### 国际化语言
 🇨🇳 中文简/繁, 🇺🇸 英语, 🇯🇵 日语, 🇫🇷 法语, 🇩🇪 德语, 🇷🇺 俄语, 🇻🇳 越南语, 🇰🇷 韩语, 🇲🇾 马来语, 🇮🇹 意大利语, 🇮🇩 印度尼西亚语, 🇪🇸 西班牙语, 🇵🇹 葡萄牙语, 🇹🇷 土耳其语, 🇸🇦 阿拉伯语.
 
-### <a id="安装方法"></a>使用方法
+### 安装方法
 
 * Manually 
   * 1.直接把`Sources`文件夹拖入到你的工程中
@@ -148,11 +149,11 @@ ZLPhotoBrowser是一款微信样式的图片选择器，支持预览/相册内�
   * 2. 输入对应版本号（SPM 最低版本为 `4.0.9`）
   * 3. 等Xcode下载完成后确定即可
 
-### <a id="支持"></a> 支持
+### 支持
 * 给个[**★ Star**](#)
 * 请喝☕️ <img src="https://github.com/longitachi/ImageFolder/blob/master/ZLPhotoBrowser/ap.png" width = "100" height = "125" /> or <img src="https://github.com/longitachi/ImageFolder/blob/master/ZLPhotoBrowser/wp.png" width = "100" height = "125" />  or <img src="https://github.com/longitachi/ImageFolder/blob/master/ZLPhotoBrowser/pp.png" width = "150" height = "125" />
 
-### <a id="效果图"></a> 效果图
+### 效果图
 - 选择
 ![image](https://github.com/longitachi/ImageFolder/blob/master/ZLPhotoBrowser/%E5%BF%AB%E9%80%9F%E9%80%89%E6%8B%A9.gif)
 ![image](https://github.com/longitachi/ImageFolder/blob/master/ZLPhotoBrowser/%E7%9B%B8%E5%86%8C%E5%86%85%E9%83%A8%E9%80%89%E6%8B%A9.gif)
