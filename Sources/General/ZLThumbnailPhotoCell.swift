@@ -234,15 +234,15 @@ class ZLThumbnailPhotoCell: UICollectionViewCell {
         }
         
         let showSelBtn: Bool
-        if config.maxSelectCount > 1 {
-            if !config.allowMixSelect {
-                showSelBtn = model.type.rawValue < ZLPhotoModel.MediaType.video.rawValue
-            } else {
-                showSelBtn = true
-            }
-        } else {
-            showSelBtn = config.showSelectBtnWhenSingleSelect
-        }
+//        if config.maxSelectCount > 1 {
+//            if !config.allowMixSelect {
+//                showSelBtn = model.type.rawValue < ZLPhotoModel.MediaType.video.rawValue
+//            } else {
+//                showSelBtn = true
+//            }
+//        } else {
+            showSelBtn = true //config.showSelectBtnWhenSingleSelect
+//        }
         
         btnSelect.isHidden = !showSelBtn
         btnSelect.isUserInteractionEnabled = showSelBtn

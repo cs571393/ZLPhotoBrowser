@@ -1471,9 +1471,12 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
                         cell.enableSelect = false
                     }
                 } else if selCount > 0 {
+                    let videoCount = arrSel.filter { $0.type == .video }.count
+                    let photo_can_select = config.maxVideoSelectCount > videoCount
+                    
                     cell.coverView.backgroundColor = .zl.invalidMaskColor
-                    cell.coverView.isHidden = (!uiConfig.showInvalidMask || model.type != .video)
-                    cell.enableSelect = model.type != .video
+                    cell.coverView.isHidden = (!uiConfig.showInvalidMask || (model.type != .video && photo_can_select))
+                    cell.enableSelect = model.type != .video && photo_can_select
                 }
             } else if selCount >= config.maxSelectCount {
                 cell.coverView.backgroundColor = .zl.invalidMaskColor
