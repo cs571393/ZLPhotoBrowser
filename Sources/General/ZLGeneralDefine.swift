@@ -144,12 +144,17 @@ func showAlertController(title: String?, message: String?, style: ZLCustomAlertS
     presentedVC?.zl.showAlertController(alert)
 }
 
-func canAddModel(_ model: ZLPhotoModel, currentSelectCount: Int, sender: UIViewController?, showAlert: Bool = true) -> Bool {
+func canAddModel(_ model: ZLPhotoModel, arrSelectedModels: [ZLPhotoModel]?, sender: UIViewController?, showAlert: Bool = true) -> Bool {
     let config = ZLPhotoConfiguration.default()
     
     guard config.canSelectAsset?(model.asset) ?? true else {
         return false
     }
+    guard let arrSelectedModels = arrSelectedModels else {
+        return false
+    }
+    let currentSelectCount = arrSelectedModels.count
+    let selectVideoCount = arrSelectedModels.count(where: { $0.type == .video })
     
     if currentSelectCount >= config.maxSelectCount {
         if showAlert {
@@ -162,6 +167,13 @@ func canAddModel(_ model: ZLPhotoModel, currentSelectCount: Int, sender: UIViewC
     if currentSelectCount > 0,
        !config.allowMixSelect,
        model.type == .video {
+        return false
+    }
+    
+    /// 【Konvy注释】用于判断如果不能视频图片同时选中时，已经选中了视频，就不能选择图片了
+    if selectVideoCount > 0,
+       !config.allowMixSelect,
+       model.type == .image {
         return false
     }
     

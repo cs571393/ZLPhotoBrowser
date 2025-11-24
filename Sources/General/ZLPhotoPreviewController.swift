@@ -605,7 +605,7 @@ class ZLPhotoPreviewController: UIViewController {
             
             resetSubviewStatus()
         } else {
-            if !canAddModel(currentModel, currentSelectCount: nav.arrSelectedModels.count, sender: self) {
+            if !canAddModel(currentModel, arrSelectedModels: nav.arrSelectedModels, sender: self) {
                 return
             }
             
@@ -720,19 +720,22 @@ class ZLPhotoPreviewController: UIViewController {
             return
         }
         
-        guard canAddModel(currentModel, currentSelectCount: nav.arrSelectedModels.count, sender: self) else {
+        guard canAddModel(currentModel, arrSelectedModels: nav.arrSelectedModels, sender: self) else {
             return
         }
         if autoSelectCurrentIfNotSelectAnyone {
             let isNotSelectAnyone = nav.arrSelectedModels.isEmpty
-            if nav.arrSelectedModels.isEmpty, canAddModel(currentModel, currentSelectCount: nav.arrSelectedModels.count, sender: self) {
+            if nav.arrSelectedModels.isEmpty, canAddModel(currentModel, arrSelectedModels: nav.arrSelectedModels, sender: self) {
+                /// 【Konvy注释】为了isAutoCloseController=false导致没选中问题
+                currentModel.isSelected = true
                 nav.arrSelectedModels.append(currentModel)
             }
             
             if !nav.arrSelectedModels.isEmpty {
                 callBackBeforeDone()
             }
-            if isNotSelectAnyone {
+            /// 【Konvy注释】为了isAutoCloseController=false导致没选中问题
+            if isNotSelectAnyone && ZLPhotoUIConfiguration.default().isAutoCloseController {
                 nav.arrSelectedModels.removeAll()
             }
         }

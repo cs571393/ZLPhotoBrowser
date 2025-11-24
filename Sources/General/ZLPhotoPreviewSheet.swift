@@ -147,9 +147,6 @@ public class ZLPhotoPreviewSheet: UIView {
     @objc public var cancelBlock: (() -> Void)?
     /// 选择自定义相机回调
     @objc public var selectCustomCameraBlock: ((ZLPhotoPreviewSheet.CustomCameraBlock?) -> Void)?
-
-    ///  是否自动关闭控制器
-    @objc public var isAutoCloseController: Bool = true
     
     deinit {
         zl_debugPrint("ZLPhotoPreviewSheet deinit")
@@ -619,7 +616,8 @@ public class ZLPhotoPreviewSheet: UIView {
                 }
             }
             
-            if self?.isAutoCloseController ?? false {
+            /// 【Konvy注释】选择完照片是否关闭控制器
+            if ZLPhotoUIConfiguration.default().isAutoCloseController {
                 if let vc = viewController {
                     self?.isHidden = true
                     self?.animate = false
@@ -863,7 +861,7 @@ public class ZLPhotoPreviewSheet: UIView {
         if config.maxSelectCount == 1, !config.showSelectBtnWhenSingleSelect {
             canSelect = false
         }
-        if canSelect, canAddModel(newModel, currentSelectCount: arrSelectedModels.count, sender: sender, showAlert: false) {
+        if canSelect, canAddModel(newModel, arrSelectedModels: arrSelectedModels, sender: sender, showAlert: false) {
             if !shouldDirectEdit(newModel) {
                 newModel.isSelected = true
                 arrSelectedModels.append(newModel)
@@ -920,7 +918,7 @@ extension ZLPhotoPreviewSheet: UICollectionViewDataSource, UICollectionViewDeleg
             guard let `self` = self else { return }
             
             if !model.isSelected {
-                guard canAddModel(model, currentSelectCount: self.arrSelectedModels.count, sender: self.sender) else {
+                guard canAddModel(model, arrSelectedModels: self.arrSelectedModels, sender: self.sender) else {
                     return
                 }
                 

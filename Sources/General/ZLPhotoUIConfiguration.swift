@@ -47,6 +47,9 @@ public class ZLPhotoUIConfiguration: NSObject {
     
     // MARK: Framework style.
     
+    /// 【Konvy注释】选择完照片是否关闭控制器。默认是true
+    public var isAutoCloseController: Bool = true
+    
     /// Photo sorting method, the preview interface is not affected by this parameter. Defaults to true.
     public var sortAscending = true
     

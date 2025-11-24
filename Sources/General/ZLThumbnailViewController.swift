@@ -656,7 +656,7 @@ class ZLThumbnailViewController: UIViewController {
                         return
                     }
                     
-                    if !(cell?.enableSelect ?? true) || !canAddModel(m, currentSelectCount: nav.arrSelectedModels.count, sender: self) {
+                    if !(cell?.enableSelect ?? true) || !canAddModel(m, arrSelectedModels: nav.arrSelectedModels, sender: self) {
                         panSelectType = .none
                         return
                     }
@@ -727,7 +727,7 @@ class ZLThumbnailViewController: UIViewController {
                     if inSection {
                         if self.panSelectType == .select {
                             if !m.isSelected,
-                               canAddModel(m, currentSelectCount: nav.arrSelectedModels.count, sender: self, showAlert: false) {
+                               canAddModel(m, arrSelectedModels: nav.arrSelectedModels, sender: self, showAlert: false) {
                                 m.isSelected = true
                             }
                         } else if self.panSelectType == .cancel {
@@ -1014,7 +1014,7 @@ class ZLThumbnailViewController: UIViewController {
         // 是否是单选模式，且不显示选择按钮
         let isSingleAndNotShowSelectBtnMode = config.maxSelectCount == 1 && !config.showSelectBtnWhenSingleSelect
         
-        if canSelect, canAddModel(newModel, currentSelectCount: nav?.arrSelectedModels.count ?? 0, sender: self, showAlert: false) {
+        if canSelect, canAddModel(newModel, arrSelectedModels: nav?.arrSelectedModels, sender: self, showAlert: false) {
             if !shouldDirectEdit(newModel) {
                 if config.callbackDirectlyAfterTakingPhoto || !isSingleAndNotShowSelectBtnMode {
                     newModel.isSelected = true
@@ -1237,8 +1237,8 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
         
         cell.selectedBlock = { [weak self, weak nav] block in
             if !model.isSelected {
-                let currentSelectCount = nav?.arrSelectedModels.count ?? 0
-                guard canAddModel(model, currentSelectCount: currentSelectCount, sender: self) else {
+                // let currentSelectCount = nav?.arrSelectedModels.count ?? 0
+                guard canAddModel(model, arrSelectedModels: nav?.arrSelectedModels, sender: self) else {
                     return
                 }
                 
@@ -1472,7 +1472,7 @@ extension ZLThumbnailViewController: UICollectionViewDataSource, UICollectionVie
                     }
                 } else if selCount > 0 {
                     let videoCount = arrSel.filter { $0.type == .video }.count
-                    let photo_can_select = config.maxVideoSelectCount > videoCount
+                    let photo_can_select = videoCount == 0
                     
                     cell.coverView.backgroundColor = .zl.invalidMaskColor
                     cell.coverView.isHidden = (!uiConfig.showInvalidMask || (model.type != .video && photo_can_select))
