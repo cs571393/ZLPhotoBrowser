@@ -132,6 +132,9 @@ public class ZLPhotoPreviewSheet: UIView {
         return queue
     }()
     
+    /// 【Konvy注释】选择完照片是否关闭控制器。默认是true
+    public var isAutoCloseController: Bool = true
+    
     /// Success callback
     /// block params
     ///  - params1: result models
@@ -803,6 +806,7 @@ public class ZLPhotoPreviewSheet: UIView {
     private func getImageNav(rootViewController: UIViewController) -> ZLImageNavController {
         let nav = ZLImageNavController(rootViewController: rootViewController)
         nav.modalPresentationStyle = .fullScreen
+        nav.isAutoCloseController = self.isAutoCloseController
         nav.selectImageBlock = { [weak self, weak nav] in
             self?.isSelectOriginal = nav?.isSelectedOriginal ?? false
             self?.arrSelectedModels.removeAll()

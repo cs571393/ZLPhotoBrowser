@@ -28,6 +28,9 @@ import UIKit
 import Photos
 
 class ZLImageNavController: UINavigationController {
+    /// 【Konvy注释】选择完照片是否关闭控制器。默认是true
+    public var isAutoCloseController: Bool = true
+    
     var isSelectedOriginal = false
     
     var arrSelectedModels: [ZLPhotoModel] = []

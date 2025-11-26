@@ -38,8 +38,6 @@ public class ZLPhotoUIConfiguration: NSObject {
     private static var single = ZLPhotoUIConfiguration()
     
     public class func `default`() -> ZLPhotoUIConfiguration {
-        /// 【Konvy注释】默认isAutoCloseController=false避免影响其他地方
-        ZLPhotoUIConfiguration.single.isAutoCloseController = true
         return ZLPhotoUIConfiguration.single
     }
     
@@ -48,9 +46,6 @@ public class ZLPhotoUIConfiguration: NSObject {
     }
     
     // MARK: Framework style.
-    
-    /// 【Konvy注释】选择完照片是否关闭控制器。默认是true
-    public var isAutoCloseController: Bool = true
     
     /// Photo sorting method, the preview interface is not affected by this parameter. Defaults to true.
     public var sortAscending = true

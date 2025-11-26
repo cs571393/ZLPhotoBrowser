@@ -735,7 +735,8 @@ class ZLPhotoPreviewController: UIViewController {
                 callBackBeforeDone()
             }
             /// 【Konvy注释】为了isAutoCloseController=false导致没选中问题
-            if isNotSelectAnyone && ZLPhotoUIConfiguration.default().isAutoCloseController {
+            let isAutoCloseController = (navigationController as? ZLImageNavController)?.isAutoCloseController ?? false
+            if isNotSelectAnyone && isAutoCloseController {
                 nav.arrSelectedModels.removeAll()
             }
         }
