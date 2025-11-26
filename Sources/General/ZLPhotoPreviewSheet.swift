@@ -620,7 +620,7 @@ public class ZLPhotoPreviewSheet: UIView {
             }
             
             /// 【Konvy注释】选择完照片是否关闭控制器
-            if ZLPhotoUIConfiguration.default().isAutoCloseController {
+            if self.isAutoCloseController {
                 if let vc = viewController {
                     self?.isHidden = true
                     self?.animate = false
