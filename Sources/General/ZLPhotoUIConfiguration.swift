@@ -39,7 +39,7 @@ public class ZLPhotoUIConfiguration: NSObject {
     
     public class func `default`() -> ZLPhotoUIConfiguration {
         /// 【Konvy注释】默认isAutoCloseController=false避免影响其他地方
-        ZLPhotoUIConfiguration.single.isAutoCloseController = false
+        ZLPhotoUIConfiguration.single.isAutoCloseController = true
         return ZLPhotoUIConfiguration.single
     }
     
